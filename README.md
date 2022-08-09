@@ -66,6 +66,7 @@ http://localhost/?s=3&img=spongebob
 
 Example result
 
+![example](example_result.png)
 
 ```..................................................
 .........,...,:,...,,.............................
