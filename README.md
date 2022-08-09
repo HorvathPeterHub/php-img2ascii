@@ -18,10 +18,31 @@ $outputStream = fopen("php://output", "a+");
 $img2Ascii->toStream($outputStream);
 ```
 
+### Processing the characters and newlines from userland code
+```
+$img2Ascii->callback(
+    function (string $char)
+    {
+        echo htmlentities($char);
+    },
+    function ()
+    {
+        echo "<br />";
+    });
+```
+
 ### Changing Character set
 ```
 $img2Ascii->setChars('@#%$?*+";:,. ');
 ```
+
+### Blocksize
+When you don't want each pixel to be translated into a character, but want to collect the brightness of a rectangle
+(so-called "block"), set it with `setBlockSize()`. This reduces the width and height of the resulting ascii image.
+```
+$img2Ascii->setBlockSize(4);
+```
+
 
 ### Using Mutibyte Characters
 ```

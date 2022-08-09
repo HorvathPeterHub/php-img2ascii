@@ -55,7 +55,7 @@ class Img2Ascii
         $this->multibyte = $multibyte;
     }
 
-    public function write(): void
+    public function write(string $eol = PHP_EOL): void
     {
         $this->open();
         $this->walk(
@@ -63,9 +63,9 @@ class Img2Ascii
             {
                 echo $char;
             },
-            function ()
+            function () use ($eol)
             {
-                echo PHP_EOL;
+                echo $eol;
             });
     }
 
@@ -100,6 +100,13 @@ class Img2Ascii
                 fwrite($stream, PHP_EOL);
             });
     }
+
+    public function callback(callable $singleChar, callable $newLine): void
+    {
+        $this->open();
+        $this->walk($singleChar(...), $newLine(...));
+    }
+
 
     protected function open(): void
     {
