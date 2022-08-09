@@ -58,7 +58,47 @@ class Img2Ascii
     public function write(): void
     {
         $this->open();
-        $this->walk();
+        $this->walk(
+            function ($char)
+            {
+                echo $char;
+            },
+            function ()
+            {
+                echo PHP_EOL;
+            });
+    }
+
+    public function get(): string
+    {
+        $result = "";
+
+        $this->open();
+        $this->walk(
+            function ($char) use (&$result)
+            {
+                $result .= $char;
+            },
+            function () use (&$result)
+            {
+                $result .= PHP_EOL;
+            });
+
+        return $result;
+    }
+
+    public function toStream($stream): void
+    {
+        $this->open();
+        $this->walk(
+            function ($char) use ($stream)
+            {
+                fwrite($stream, $char);
+            },
+            function () use ($stream)
+            {
+                fwrite($stream, PHP_EOL);
+            });
     }
 
     protected function open(): void
@@ -87,7 +127,7 @@ class Img2Ascii
         $this->gdImage = $img;
     }
 
-    protected function walk(): void
+    protected function walk(callable $singleChar, callable $newLine): void
     {
         for ($y = 0; $y < $this->imageInfo[1]; $y += $this->blockSize)
         {
@@ -95,9 +135,11 @@ class Img2Ascii
             {
                 $block = $this->readBlock($x, $y);
 
-                echo $this->blockToAscii($block);
+                $char = $this->blockToAscii($block);
+                $singleChar($char);
             }
-            echo "\n";
+
+            $newLine();
         }
     }
 
@@ -111,12 +153,12 @@ class Img2Ascii
             foreach ($row as $pixel)
             {
                 // 0..1, from dark to bright
-                $brightness = ($pixel["r"] + $pixel["g"] + $pixel["b"]) / (3*255);
+                $brightness = ($pixel["r"] + $pixel["g"] + $pixel["b"]) / (3 * 255);
 
                 // 0..1, from transparent to opaque
                 $alphaRatio = $pixel["a"] / 128;
 
-                $alphaBrightness = (1-$brightness) * $alphaRatio;
+                $alphaBrightness = (1 - $brightness) * $alphaRatio;
 
                 $sumBrightness += $brightness + $alphaBrightness;
             }

@@ -5,6 +5,8 @@ $img2Ascii = new Img2Ascii();
 $img2Ascii->setChars('@#%$?*+";:,. ');
 //$img2Ascii->setChars('█▓▒░ ', true);
 
+$outputStream = fopen("php://output", "a+");
+
 switch ($_GET["s"] ?? 0)
 {
     case 0:
@@ -53,7 +55,7 @@ $img2Ascii->setImageFile(__DIR__ . "/" . $imageFile);
 <head></head>
 <body style="margin:0;padding:0">
 <pre style="font-size:<?php echo $fontSize[0]; ?>px;line-height:<?php echo $fontSize[1]; ?>px;">
-<?php $img2Ascii->write(); ?>
+<?php $img2Ascii->toStream($f); ?>
 </pre>
 </body>
 </html>
