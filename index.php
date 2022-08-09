@@ -3,6 +3,7 @@ require __DIR__ . "/Img2Ascii.php";
 
 $img2Ascii = new Img2Ascii();
 $img2Ascii->setChars('@#%$?*+";:,. ');
+//$img2Ascii->setChars('█▓▒░ ', true);
 
 switch ($_GET["s"] ?? 0)
 {

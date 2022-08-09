@@ -14,6 +14,7 @@ class Img2Ascii
     protected int $blockSize = 1;
 
     protected bool $inverse = false;
+    protected bool $multibyte = false;
 
     public function __construct(string $imageFile = null)
     {
@@ -43,9 +44,15 @@ class Img2Ascii
         $this->inverse = $inverse;
     }
 
-    public function setChars(string $chars): void
+    public function multibyte(bool $multibyte = true): void
+    {
+        $this->multibyte = $multibyte;
+    }
+
+    public function setChars(string $chars, bool $multibyte = false): void
     {
         $this->chars = $chars;
+        $this->multibyte = $multibyte;
     }
 
     public function write(): void
@@ -98,7 +105,7 @@ class Img2Ascii
     {
         $maxBrightness = count($block) * count($block[0]);
         $sumBrightness = 0;
-        $len = strlen($this->chars);
+        $len = $this->multibyte ? mb_strlen($this->chars) : strlen($this->chars);
         foreach ($block as $row)
         {
             foreach ($row as $pixel)
@@ -122,7 +129,9 @@ class Img2Ascii
             $index = -$index;
         }
 
-        return substr($this->chars, $index, 1);
+        return $this->multibyte
+            ? mb_substr($this->chars, $index, 1)
+            : substr($this->chars, $index, 1);
     }
 
     protected function readBlock(int $x, int $y): array
